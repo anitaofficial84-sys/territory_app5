@@ -62,6 +62,12 @@ jobs:
           cp android/app/src/main/AndroidManifest.xml "$RUNNER_TEMP/TerritoryAndroidManifest.xml"
           flutter create . --platforms=android --project-name territory_app --org com.territory
           cp "$RUNNER_TEMP/TerritoryAndroidManifest.xml" android/app/src/main/AndroidManifest.xml
+          # flutter create adds a placeholder test that assumes a MyApp widget.
+          # The supplied ZIP has no tests, so discard only this generated scaffold.
+          if [ -f test/widget_test.dart ] && grep -q 'MyApp()' test/widget_test.dart; then
+            rm -f test/widget_test.dart
+            rmdir test 2>/dev/null || true
+          fi
 
       - name: Install dependencies
         working-directory: ${{ env.PROJECT_DIR }}
